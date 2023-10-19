@@ -1,0 +1,70 @@
+version: '3.9'
+
+networks:
+  default:
+    name: ${PROJECT_NAME:-project}-network
+    driver: bridge
+
+volumes:
+  db-prod:
+  backend-prod-storage:
+
+services:
+
+  backend:
+    build:
+      context: ../../
+      dockerfile: ./.deploy/production/Dockerfile
+    entrypoint: sh -c "php /app/artisan migrate --force && php-fpm"
+    environment:
+      - APP_ENV=local
+      - APP_KEY=${APP_KEY:-base64:}
+      - APP_DEBUG=False
+      - DB_CONNECTION=pgsql
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=${DB_DATABASE:-postgres}
+      - DB_USERNAME=${DB_USER:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-QWEasd123$}
+    volumes:
+      - backend-prod-storage:/app/storage
+    depends_on:
+      db:
+        condition: service_healthy
+    container_name: ${PROJECT_NAME:-project}-backend
+    restart: unless-stopped
+
+  backend-api:
+    build:
+      context: ../..
+      dockerfile: .deploy/production/nginx/Dockerfile
+    depends_on:
+      - backend
+    container_name: ${PROJECT_NAME:-project}-backend-api
+    restart: unless-stopped
+
+  db:
+    image: postgres:15.0-alpine
+    container_name: ${PROJECT_NAME:-project}-db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-QWEasd123$}
+      - POSTGRES_USER=${DB_USER:-postgres}
+      - POSTGRES_DB=${DB_DATABASE:-postgres}
+    volumes:
+      - db-prod:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USERNAME:-postgres}" ]
+      interval: 5s
+      timeout: 25s
+      retries: 10
+
+  proxy:
+    build:
+      context: ../..
+      dockerfile: .deploy/production/proxy/Dockerfile
+    container_name: ${PROJECT_NAME:-project}-proxy
+    ports:
+      - ${WEB_PORT:-8000}:80
+    depends_on:
+      - backend-api
