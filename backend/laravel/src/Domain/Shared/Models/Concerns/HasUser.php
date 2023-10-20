@@ -1,8 +1,8 @@
 <?php
 
-namespace Domain\Shared\Models\Concerns;
+namespace src\Domain\Shared\Models\Concerns;
 
-use Domain\Shared\Models\Scopes\UserScope;
+use src\Domain\Shared\Models\Scopes\UserScope;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use src\Domain\Shared\Models\User;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Domain\Shared\Models\Scopes;
+namespace src\Domain\Shared\Models\Scopes;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
