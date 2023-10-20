@@ -13,10 +13,5 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-Route::get('/', function () {
-    return ['welcome'];
-});
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::get('user/{user}', \App\Http\Controllers\Shared\User\GetUserController::class);
+Route::get('users', \App\Http\Controllers\Shared\User\GetUsersController::class);
