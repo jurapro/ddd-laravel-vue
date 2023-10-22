@@ -15,3 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 Route::get('user/{user}', \App\Http\Controllers\Shared\User\GetUserController::class);
 Route::get('users', \App\Http\Controllers\Shared\User\GetUsersController::class);
+
+Route::get('test', function () {
+    return view('test');
+});
