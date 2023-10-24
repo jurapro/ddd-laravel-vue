@@ -5,7 +5,7 @@
 </head>
 
 <body>
-<h2>Данные из публичного канала channel</h2>
+<h2>Данные из публичного канала channel (имя только что запрошенного пользователя по адресу /user/id)</h2>
 <div id="counter">-</div>
 <script src="https://unpkg.com/centrifuge@3.1.0/dist/centrifuge.js"></script>
 <script type="text/javascript">
