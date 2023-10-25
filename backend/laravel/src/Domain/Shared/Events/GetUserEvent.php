@@ -1,6 +1,7 @@
 <?php
 
 namespace Domain\Shared\Events;
+
 use Domain\Shared\Models\User\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -32,6 +33,10 @@ class GetUserEvent implements ShouldBroadcastNow
         ];
     }
 
+    public function broadcastAs()
+    {
+        return 'user.getting';
+    }
 
     public function broadcastWith()
     {

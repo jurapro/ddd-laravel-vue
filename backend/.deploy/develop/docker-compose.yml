@@ -21,7 +21,7 @@ services:
       - ../../laravel:/app
     environment:
       - APP_ENV=local
-      - APP_KEY=base64:7t3iJGYKu1jqjeEQixGEL8mXwCr6XgVRmd6ryRII3Jo=
+      - APP_KEY=${APP_KEY:-base64:}
       - APP_DEBUG=True
       - DB_CONNECTION=pgsql
       - DB_HOST=db
