@@ -88,7 +88,6 @@ services:
         CENTRIFUGO_ADMIN_SECRET: ${CENTRIFUGO_ADMIN_SECRET:-9b6f6854-7525-4025-99df-0a8f288acdd0}
         ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-*}
     container_name: ${PROJECT_NAME:-project}-centrifugo-backend-local
-    #image: ${PROJECT_NAME:-project}/centrifugo-dev
     restart: unless-stopped
     ports:
       - "8000:8000"
