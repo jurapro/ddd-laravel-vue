@@ -17,6 +17,5 @@
   "anonymous": true,
   "allowed_origins": ["{{ ALLOWED_ORIGINS }}"],
   "history_ttl": "720h",
-  "recover": true,
-  "allow_subscribe_for_client": true
+  "recover": true
 }

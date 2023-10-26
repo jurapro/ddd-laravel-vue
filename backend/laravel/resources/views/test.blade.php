@@ -56,8 +56,12 @@
                 console.log(`unsubscribed: ${ctx.code}, ${ctx.reason}`);
             }).subscribe();
 
-
-            const sub = centrifuge.newSubscription("channel");
+            const sub = centrifuge.newSubscription("channel", {
+                    getToken: function (ctx) {
+                        return customGetToken(subscribeTokenEndpoint, ctx);
+                    }
+                }
+            );
 
             sub.on('publication', function (ctx) {
                 container.innerHTML = ctx.data.value;
