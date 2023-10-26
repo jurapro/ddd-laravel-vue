@@ -15,45 +15,86 @@
     const container = document.getElementById('public');
     const containerPrivate = document.getElementById('private');
 
-    const centrifuge = new Centrifuge("ws://localhost/connection/websocket", {
-        token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiZXhwIjoxNjk4MzgxNzcwLCJpbmZvIjp7Im5hbWUiOm51bGx9fQ.lucBvLUyU6qwRzJOkOQUnFkwKkq_PzavFK_NEzpUw0o"
-    });
-
-    centrifuge.on('connecting', function (ctx) {
-        console.log(`connecting: ${ctx.code}, ${ctx.reason}`);
-    }).on('connected', function (ctx) {
-        console.log(`connected over ${ctx.transport}`);
-    }).on('disconnected', function (ctx) {
-        console.log(`disconnected: ${ctx.code}, ${ctx.reason}`);
-    }).connect();
-
-    const sub = centrifuge.newSubscription("channel");
-
-    sub.on('publication', function (ctx) {
-        container.innerHTML = ctx.data.value;
-        document.title = ctx.data.value;
-    }).on('subscribing', function (ctx) {
-        console.log(`subscribing: ${ctx.code}, ${ctx.reason}`);
-    }).on('subscribed', function (ctx) {
-        console.log('subscribed', ctx);
-    }).on('unsubscribed', function (ctx) {
-        console.log(`unsubscribed: ${ctx.code}, ${ctx.reason}`);
-    }).subscribe();
+    const getTokensEndpoint = 'http://localhost/api/token/1';
+    const endpointCentrifugo = 'ws://localhost/connection/websocket';
+    const subscribeTokenEndpoint = 'http://localhost/api/broadcasting/auth';
 
 
-    const subPrivate = centrifuge.newSubscription("channel.user.1");
+    fetch(getTokensEndpoint)
+        .then(response => response.json())
+        .then(response => {
+            const tokenUser = response.tokenAccess.plainTextToken;
+            const tokenCentrifugo = response.tokenCentrifugo;
 
-    subPrivate.on('publication', function (ctx) {
-        containerPrivate.innerHTML = ctx.data.value;
-        document.title = ctx.data.value;
-    }).on('subscribing', function (ctx) {
-        console.log(`subscribing: ${ctx.code}, ${ctx.reason}`);
-    }).on('subscribed', function (ctx) {
-        console.log('subscribed', ctx);
-    }).on('unsubscribed', function (ctx) {
-        console.log(`unsubscribed: ${ctx.code}, ${ctx.reason}`);
-    }).subscribe();
+            const centrifuge = new Centrifuge(endpointCentrifugo, {
+                token: tokenCentrifugo
+            });
 
+            centrifuge.on('connecting', function (ctx) {
+                console.log(`connecting: ${ctx.code}, ${ctx.reason}`);
+            }).on('connected', function (ctx) {
+                console.log(`connected over ${ctx.transport}`);
+            }).on('disconnected', function (ctx) {
+                console.log(`disconnected: ${ctx.code}, ${ctx.reason}`);
+            }).connect();
+
+            const subPrivate = centrifuge.newSubscription("channel.user.1", {
+                    getToken: function (ctx) {
+                        return customGetToken(subscribeTokenEndpoint, ctx);
+                    }
+                }
+            );
+
+            subPrivate.on('publication', function (ctx) {
+                containerPrivate.innerHTML = ctx.data.value;
+                document.title = ctx.data.value;
+            }).on('subscribing', function (ctx) {
+                console.log(`subscribing: ${ctx.code}, ${ctx.reason}`);
+            }).on('subscribed', function (ctx) {
+                console.log('subscribed', ctx);
+            }).on('unsubscribed', function (ctx) {
+                console.log(`unsubscribed: ${ctx.code}, ${ctx.reason}`);
+            }).subscribe();
+
+
+            const sub = centrifuge.newSubscription("channel");
+
+            sub.on('publication', function (ctx) {
+                container.innerHTML = ctx.data.value;
+                document.title = ctx.data.value;
+            }).on('subscribing', function (ctx) {
+                console.log(`subscribing: ${ctx.code}, ${ctx.reason}`);
+            }).on('subscribed', function (ctx) {
+                console.log('subscribed', ctx);
+            }).on('unsubscribed', function (ctx) {
+                console.log(`unsubscribed: ${ctx.code}, ${ctx.reason}`);
+            }).subscribe();
+
+            function customGetToken(endpoint, ctx) {
+                return new Promise((resolve, reject) => {
+                    fetch(endpoint, {
+                        method: 'POST',
+                        headers: new Headers({
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${tokenUser}`,
+                        }),
+                        body: JSON.stringify(ctx)
+                    })
+                        .then(res => {
+                            if (!res.ok) {
+                                throw new Error(`Unexpected status code ${res.status}`);
+                            }
+                            return res.json();
+                        })
+                        .then(data => {
+                            resolve(data.token);
+                        })
+                        .catch(err => {
+                            reject(err);
+                        });
+                });
+            }
+        })
 </script>
 </body>
 

@@ -42,3 +42,4 @@
 * [http://localhost/api/test](http://localhost/api/test) - Страница интеграции фронта с центрифугой
 * [http://localhost/api/users](http://localhost/api/users) - Эндпойнт возвращает спискок пользователь
 * [http://localhost/api/user/<id>](http://localhost/api/user/<id>) - Эндпойнт возвращает одного пользователя (+генерит событие рассылки в центрифугу)
+* [http://localhost/api/broadcasting/auth?channel=channel.user.1](localhost/api/broadcasting/auth?channel=channel.user.1) - получение токена авторизации для приватного канала
