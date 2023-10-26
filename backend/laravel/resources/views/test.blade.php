@@ -15,12 +15,12 @@
     const container = document.getElementById('public');
     const containerPrivate = document.getElementById('private');
 
-    const getTokensEndpoint = 'http://localhost/api/token/1';
+    const authEndpoint = 'http://localhost/api/token/1';
     const endpointCentrifugo = 'ws://localhost/connection/websocket';
     const subscribeTokenEndpoint = 'http://localhost/api/broadcasting/auth';
 
 
-    fetch(getTokensEndpoint)
+    fetch(authEndpoint)
         .then(response => response.json())
         .then(response => {
             const tokenUser = response.tokenAccess.plainTextToken;
