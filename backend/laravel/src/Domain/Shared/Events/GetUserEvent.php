@@ -5,6 +5,7 @@ namespace Domain\Shared\Events;
 use Domain\Shared\Models\User\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
@@ -29,7 +30,8 @@ class GetUserEvent implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
-            new Channel('channel')
+            new Channel('channel'),
+            new PrivateChannel('channel.user.' . $this->user->id),
         ];
     }
 
