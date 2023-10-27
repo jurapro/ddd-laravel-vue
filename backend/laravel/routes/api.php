@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('user/{user}', \App\Http\Controllers\Shared\User\GetUserController::class);
 Route::get('users', \App\Http\Controllers\Shared\User\GetUsersController::class);
 
-Route::get('token/{user}', \App\Http\Controllers\Shared\User\AuthUserController::class);
+Route::get('auth/{user}', \App\Http\Controllers\Shared\User\AuthUserController::class);
 
 Route::get('test', function () {
     return view('test');

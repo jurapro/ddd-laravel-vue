@@ -15,7 +15,7 @@
     const container = document.getElementById('public');
     const containerPrivate = document.getElementById('private');
 
-    const authEndpoint = 'http://localhost/api/token/1';
+    const authEndpoint = 'http://localhost/api/auth/1';
     const endpointCentrifugo = 'ws://localhost/connection/websocket';
     const subscribeTokenEndpoint = 'http://localhost/api/broadcasting/auth';
 

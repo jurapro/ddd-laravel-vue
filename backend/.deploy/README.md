@@ -40,5 +40,6 @@
 * [http://localhost/adminer](http://localhost/adminer) - Управление базой данных (только для локального окружения)
 * [http://localhost/centrifugo](http://localhost/centrifugo) - Админ-панель центрифуги (только для локального окружения)
 * [http://localhost/api/test](http://localhost/api/test) - Страница интеграции фронта с центрифугой
+* [http://localhost/api/auth/1](http://localhost/auth/1) - Эндпойнт, возарвщающий токены для авторизации и подключения к центрифуги пользователья с id=1
 * [http://localhost/api/users](http://localhost/api/users) - Эндпойнт возвращает спискок пользователь
 * [http://localhost/api/user/1](http://localhost/api/user/1) - Эндпойнт возвращает одного пользователя (+генерит события рассылки в центрифугу)
