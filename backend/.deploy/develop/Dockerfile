@@ -1,5 +1,11 @@
 FROM php:8.1.8-fpm
 ARG USER=www-data
+ARG APP_KEY
+ARG DB_DATABASE
+ARG DB_USERNAME
+ARG DB_PASSWORD
+ARG CENTRIFUGO_SECRET
+ARG CENTRIFUGO_APIKEY
 
 # Create a non-root user
 RUN useradd -m -s /bin/bash -p $(openssl passwd -1 $USER) $USER
@@ -21,6 +27,7 @@ RUN apt-get update && \
     zip \
     sqlite3 \
     openssh-client \
+    supervisor \
     default-mysql-client && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -33,6 +40,16 @@ RUN chmod +x ./laravel/wait-for-it.sh
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 COPY ./.deploy/develop/php.ini /usr/local/etc/php/conf.d/40-custom.ini
+COPY ./.deploy/develop/supervisor.ini /etc/supervisor/conf.d/laravel-worker.conf
+
+RUN sed -i 's/{{ APP_KEY }}/'$APP_KEY'/g' /etc/supervisor/conf.d/laravel-worker.conf \
+    && sed -i 's/{{ DB_DATABASE }}/'$DB_DATABASE'/g' /etc/supervisor/conf.d/laravel-worker.conf \
+    && sed -i 's/{{ DB_USERNAME }}/'$DB_USERNAME'/g' /etc/supervisor/conf.d/laravel-worker.conf \
+    && sed -i 's/{{ DB_PASSWORD }}/'$DB_PASSWORD'/g' /etc/supervisor/conf.d/laravel-worker.conf \
+    && sed -i 's/{{ CENTRIFUGO_SECRET }}/'$CENTRIFUGO_SECRET'/g' /etc/supervisor/conf.d/laravel-worker.conf \
+    && sed -i 's/{{ CENTRIFUGO_APIKEY }}/'$CENTRIFUGO_APIKEY'/g' /etc/supervisor/conf.d/laravel-worker.conf
+
+
 RUN composer install --working-dir=./laravel
 RUN chown -R $USER:$USER .
 USER $USER

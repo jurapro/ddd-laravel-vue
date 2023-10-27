@@ -16,7 +16,13 @@ services:
       dockerfile: ./.deploy/develop/Dockerfile
       args:
         USER: ${USER:-user}
-    entrypoint: sh -c "./wait-for-it.sh -t 300 db:5432 && /usr/bin/composer install && php /app/artisan migrate --force && php-fpm"
+        APP_KEY: ${APP_KEY:-base64:}
+        DB_DATABASE: ${DB_DATABASE:-postgres}
+        DB_USERNAME: ${DB_USER:-postgres}
+        DB_PASSWORD: ${DB_PASSWORD:-QWEasd123$}
+        CENTRIFUGO_SECRET: ${CENTRIFUGO_TOKEN_HMAC_SECRET_KEY:-1dcc78b0-2abe-4e26-89e6-de1cea0e0949}
+        CENTRIFUGO_APIKEY: ${CENTRIFUGO_API_KEY:-6b39712f-e984-4d82-8369-9c45f3111f9e}
+    entrypoint: sh -c "./wait-for-it.sh -t 300 db:5432 && /usr/bin/composer install && php /app/artisan migrate --force && /usr/bin/supervisord && php-fpm "
     volumes:
       - ../../laravel:/app
     environment:
@@ -89,5 +95,3 @@ services:
         ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-*}
     container_name: ${PROJECT_NAME:-project}-centrifugo-backend-local
     restart: unless-stopped
-    ports:
-      - "8000:8000"

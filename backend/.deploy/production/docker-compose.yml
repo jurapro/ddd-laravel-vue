@@ -26,6 +26,11 @@ services:
       - DB_DATABASE=${DB_DATABASE:-postgres}
       - DB_USERNAME=${DB_USER:-postgres}
       - DB_PASSWORD=${DB_PASSWORD:-QWEasd123$}
+      - QUEUE_CONNECTION=database
+      - BROADCAST_DRIVER=centrifugo
+      - CENTRIFUGO_SECRET=${CENTRIFUGO_TOKEN_HMAC_SECRET_KEY:-1dcc78b0-2abe-4e26-89e6-de1cea0e0949}
+      - CENTRIFUGO_APIKEY=${CENTRIFUGO_API_KEY:-6b39712f-e984-4d82-8369-9c45f3111f9e}
+      - CENTRIFUGO_URL=http://centrifugo:8000
     volumes:
       - backend-prod-storage:/app/storage
     depends_on:
@@ -68,3 +73,14 @@ services:
       - ${WEB_PORT:-8000}:80
     depends_on:
       - backend-api
+
+  centrifugo:
+    build:
+      context: ./centrifugo
+      dockerfile: ./Dockerfile
+      args:
+        CENTRIFUGO_TOKEN_HMAC_SECRET_KEY: ${CENTRIFUGO_TOKEN_HMAC_SECRET_KEY:-1dcc78b0-2abe-4e26-89e6-de1cea0e0949}
+        CENTRIFUGO_API_KEY: ${CENTRIFUGO_API_KEY:-6b39712f-e984-4d82-8369-9c45f3111f9e}
+        ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-127.0.0.1}
+    container_name: ${PROJECT_NAME:-project}-centrifugo-backend-local
+    restart: unless-stopped
