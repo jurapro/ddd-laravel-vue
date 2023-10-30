@@ -2,9 +2,10 @@
 
 namespace Database\Factories\Shared;
 
+use Domain\Shared\Models\User\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
-use src\Domain\Shared\Models\User;
+
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>

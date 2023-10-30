@@ -15,7 +15,7 @@
   "join_leave": true,
   "history_size": 10,
   "anonymous": true,
-  "allowed_origins": ["{{ ALLOWED_ORIGINS }}"],
+  "allowed_origins": ["*"],
   "history_ttl": "720h",
   "recover": true
 }

@@ -6,7 +6,7 @@ WORKDIR /app
 #install packages
 RUN apk update && apk add \
     build-base \
-    vim \
+    nano \
     bash \
     curl \
     supervisor
