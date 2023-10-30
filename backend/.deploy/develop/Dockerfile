@@ -17,22 +17,20 @@ RUN apt-get update && \
     libzip-dev && \
     apt-get install -y \
     git \
+    nano \
     unzip \
-    zip \
-    sqlite3 \
-    openssh-client \
-    default-mysql-client && \
+    zip && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN chown -R $USER:$USER .
 
 RUN docker-php-ext-install pdo pdo_pgsql sockets bcmath zip pcntl posix
-COPY --chown=$USER:$USER . .
+COPY . .
 RUN chmod +x ./laravel/wait-for-it.sh
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 COPY ./.deploy/develop/php.ini /usr/local/etc/php/conf.d/40-custom.ini
+
 RUN composer install --working-dir=./laravel
 RUN chown -R $USER:$USER .
 USER $USER

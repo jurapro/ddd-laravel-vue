@@ -1,5 +1,6 @@
 <?php
 
+use Domain\Shared\Models\User\User;
 use Illuminate\Support\Facades\Broadcast;
 
 /*
@@ -14,5 +15,13 @@ use Illuminate\Support\Facades\Broadcast;
 */
 
 Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
-    return (int) $user->id === (int) $id;
+    return (int)$user->id === (int)$id;
+});
+
+Broadcast::channel('channel.user.{id}', function (User $user, $id) {
+    return (int)$user->id === (int)$id;
+});
+
+Broadcast::channel('channel', function (User $user) {
+    return true;
 });

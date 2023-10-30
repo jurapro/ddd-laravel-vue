@@ -7,3 +7,5 @@
 *.sln
 *.sw?
 .env
+*.log
+*.log.error

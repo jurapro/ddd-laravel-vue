@@ -21,7 +21,7 @@ services:
       - ../../laravel:/app
     environment:
       - APP_ENV=local
-      - APP_KEY=base64:7t3iJGYKu1jqjeEQixGEL8mXwCr6XgVRmd6ryRII3Jo=
+      - APP_KEY=${APP_KEY:-base64:}
       - APP_DEBUG=True
       - DB_CONNECTION=pgsql
       - DB_HOST=db
@@ -29,6 +29,11 @@ services:
       - DB_DATABASE=${DB_DATABASE:-postgres}
       - DB_USERNAME=${DB_USER:-postgres}
       - DB_PASSWORD=${DB_PASSWORD:-QWEasd123$}
+      - QUEUE_CONNECTION=database
+      - BROADCAST_DRIVER=centrifugo
+      - CENTRIFUGO_SECRET=${CENTRIFUGO_TOKEN_HMAC_SECRET_KEY:-1dcc78b0-2abe-4e26-89e6-de1cea0e0949}
+      - CENTRIFUGO_APIKEY=${CENTRIFUGO_API_KEY:-6b39712f-e984-4d82-8369-9c45f3111f9e}
+      - CENTRIFUGO_URL=http://centrifugo:8000
     depends_on:
       - db
     container_name: ${PROJECT_NAME:-project}-backend
@@ -56,11 +61,11 @@ services:
       - db-dev:/var/lib/postgresql/data
 
   adminer:
-      image: adminer:4.8.1
-      container_name: ${PROJECT_NAME:-project}-adminer
-      restart: unless-stopped
-      depends_on:
-          - db
+    image: adminer:4.8.1
+    container_name: ${PROJECT_NAME:-project}-adminer
+    restart: unless-stopped
+    depends_on:
+      - db
 
   proxy:
     image: nginx:1.19-alpine
@@ -71,3 +76,38 @@ services:
       - ${WEB_PORT:-8000}:80
     depends_on:
       - backend-api
+
+  centrifugo:
+    build:
+      context: ./centrifugo
+      dockerfile: ./Dockerfile
+      args:
+        CENTRIFUGO_TOKEN_HMAC_SECRET_KEY: ${CENTRIFUGO_TOKEN_HMAC_SECRET_KEY:-1dcc78b0-2abe-4e26-89e6-de1cea0e0949}
+        CENTRIFUGO_ADMIN_PASSWORD: ${CENTRIFUGO_ADMIN_PASSWORD:-admin_password}
+        CENTRIFUGO_API_KEY: ${CENTRIFUGO_API_KEY:-6b39712f-e984-4d82-8369-9c45f3111f9e}
+        CENTRIFUGO_ADMIN_SECRET: ${CENTRIFUGO_ADMIN_SECRET:-9b6f6854-7525-4025-99df-0a8f288acdd0}
+        ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-*}
+    container_name: ${PROJECT_NAME:-project}-centrifugo-backend-local
+    restart: unless-stopped
+
+  supervisor:
+    build:
+      context: ../../
+      dockerfile: ./.deploy/develop/supervisor/Dockerfile
+      args:
+        USER: ${USER:-user}
+        APP_KEY: ${APP_KEY:-base64:}
+        DB_DATABASE: ${DB_DATABASE:-postgres}
+        DB_USERNAME: ${DB_USER:-postgres}
+        DB_PASSWORD: ${DB_PASSWORD:-QWEasd123$}
+        CENTRIFUGO_SECRET: ${CENTRIFUGO_TOKEN_HMAC_SECRET_KEY:-1dcc78b0-2abe-4e26-89e6-de1cea0e0949}
+        CENTRIFUGO_APIKEY: ${CENTRIFUGO_API_KEY:-6b39712f-e984-4d82-8369-9c45f3111f9e}
+        CENTRIFUGO_HOST: centrifugo
+    entrypoint: sh -c "./wait-for-it.sh -t 300 db:5432 && /usr/bin/supervisord"
+    container_name: ${PROJECT_NAME:-project}-supervisor
+    restart: unless-stopped
+    volumes:
+      - ../../laravel:/app
+    depends_on:
+      - db
+      - backend
