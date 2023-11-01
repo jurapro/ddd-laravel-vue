@@ -84,13 +84,13 @@ services:
         CENTRIFUGO_API_KEY: ${CENTRIFUGO_API_KEY:-6b39712f-e984-4d82-8369-9c45f3111f9e}
         CENTRIFUGO_ADMIN_SECRET: ${CENTRIFUGO_ADMIN_SECRET:-9b6f6854-7525-4025-99df-0a8f288acdd0}
         ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-*}
-    container_name: ${PROJECT_NAME:-project}-centrifugo-backend-local
+    container_name: ${PROJECT_NAME:-project}-centrifugo
     restart: unless-stopped
 
   supervisor:
     build:
       context: ../../
-      dockerfile: ./.deploy/develop/supervisor/Dockerfile
+      dockerfile: ./.deploy/production/supervisor/Dockerfile
       args:
         USER: ${USER:-user}
         APP_KEY: ${APP_KEY:-base64:}
@@ -100,7 +100,7 @@ services:
         CENTRIFUGO_SECRET: ${CENTRIFUGO_TOKEN_HMAC_SECRET_KEY:-1dcc78b0-2abe-4e26-89e6-de1cea0e0949}
         CENTRIFUGO_APIKEY: ${CENTRIFUGO_API_KEY:-6b39712f-e984-4d82-8369-9c45f3111f9e}
         CENTRIFUGO_HOST: centrifugo
-    entrypoint: sh -c "./wait-for-it.sh -t 300 db:5432 && /usr/bin/supervisord"
+    entrypoint: sh -c "/usr/bin/supervisord -c /etc/supervisord.conf"
     container_name: ${PROJECT_NAME:-project}-supervisor
     restart: unless-stopped
     volumes:
