@@ -1,17 +1,16 @@
 <?php
 
-namespace Domain\Shared\Events;
+namespace Domain\PhpTop\Events;
 
-use Domain\Shared\DataTransferObjects\User\UserData;
+use Domain\PhpTop\DataTransferObjects\Fact\RandomFactsViewModel;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Spatie\LaravelData\DataCollection;
 
-class GetUserEvent implements ShouldBroadcast
+class GetRandomFactsEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -19,7 +18,7 @@ class GetUserEvent implements ShouldBroadcast
     /**
      * Create a new event instance.
      */
-    public function __construct(public UserData $user)
+    public function __construct(public readonly RandomFactsViewModel $facts)
     {
     }
 
@@ -31,18 +30,16 @@ class GetUserEvent implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new Channel('channel'),
-            new PrivateChannel('channel.user.' . $this->user->id),
+            new Channel('random'),
         ];
     }
 
     public function broadcastAs()
     {
-        return 'user.getting';
+        return 'facts.random';
     }
-
     public function broadcastWith()
     {
-        return ['value' => $this->user->name];
+        return ['facts' => $this->facts->facts];
     }
 }

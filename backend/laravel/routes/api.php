@@ -18,6 +18,9 @@ Route::get('users', \App\Http\Controllers\Shared\User\GetUsersController::class)
 
 Route::get('auth/{user}', \App\Http\Controllers\Shared\User\AuthUserController::class);
 
+Route::get('fact/{fact}', \App\Http\Controllers\PhpTop\Fact\GetFactController::class);
+Route::get('facts', \App\Http\Controllers\PhpTop\Fact\GetRandomFactsController::class);
+
 Route::get('test', function () {
     return view('test');
 });
