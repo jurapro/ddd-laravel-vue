@@ -7,7 +7,6 @@ use Domain\PhpTop\DataTransferObjects\Fact\FactData;
 use Domain\PhpTop\DataTransferObjects\Fact\RandomFactsViewModel;
 use Domain\PhpTop\Events\GetRandomFactsEvent;
 use Domain\PhpTop\Models\Fact;
-use Domain\Shared\Events\GetUserEvent;
 
 class GetRandomFactsController extends Controller
 {

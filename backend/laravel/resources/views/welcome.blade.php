@@ -1136,7 +1136,8 @@ $keys = array_rand($contents, 4);
             );
 
             sub.on('publication', function (ctx) {
-                const facts = ctx.data.facts.facts;
+                //console.log(ctx.data.facts);
+                const facts = ctx.data.facts;
                 factsMessage.forEach((container, index) => {
                     container.children[1].innerHTML = facts[index].title;
                     container.children[2].innerHTML = facts[index].text;
