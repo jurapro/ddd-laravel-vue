@@ -14,7 +14,8 @@ class GetUserController extends Controller
 {
     public function __invoke(User $user): UserProfileViewModel
     {
-        GetUserEvent::dispatch($user);
-        return new UserProfileViewModel(UserData::from($user));
+        $userData = UserData::from($user);
+        GetUserEvent::dispatch($userData);
+        return new UserProfileViewModel($userData);
     }
 }

@@ -25,3 +25,7 @@ Broadcast::channel('channel.user.{id}', function (User $user, $id) {
 Broadcast::channel('channel', function (User $user) {
     return true;
 });
+
+Broadcast::channel('random', function (User $user) {
+    return true;
+});

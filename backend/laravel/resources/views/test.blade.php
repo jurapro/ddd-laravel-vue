@@ -24,8 +24,8 @@
     fetch(authEndpoint)
         .then(response => response.json())
         .then(response => {
-            const tokenUser = response.tokenAccess.plainTextToken;
-            const tokenCentrifugo = response.tokenCentrifugo;
+            const tokenUser = response.token_access;
+            const tokenCentrifugo = response.token_centrifugo;
 
             const centrifuge = new Centrifuge(endpointCentrifugo, {
                 token: tokenCentrifugo
